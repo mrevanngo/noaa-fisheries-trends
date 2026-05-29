@@ -66,7 +66,7 @@ fit AS (
     FROM species_year GROUP BY species
 )
 SELECT species, n_years,
-       ROUND(100.0*(EXP(log_slope)-1),1) AS annual_pct_rate,
+       ROUND((100.0*(EXP(log_slope)-1))::NUMERIC, 1) AS annual_pct_rate,
        ROUND(r2::NUMERIC,3) AS trend_strength_r2,
        CASE
          WHEN EXP(log_slope)-1 <= -0.05 AND r2 >= 0.5 THEN 'DECLINING (clear)'
@@ -75,7 +75,9 @@ SELECT species, n_years,
          WHEN r2 < 0.5 THEN 'NO CLEAR TREND'
          ELSE 'STABLE'
        END AS classification
-FROM fit ORDER BY annual_pct_rate ASC;
+FROM fit
+WHERE n_years >= 15           -- only species with enough history
+ORDER BY annual_pct_rate ASC;
 """
 
 SERIES_SQL = """
@@ -89,9 +91,11 @@ WITHHELD_SQL = """
 SELECT species,
        COUNT(*) AS total_year_rows,
        COUNT(*) FILTER (WHERE is_withheld) AS withheld_rows,
-       ROUND(100.0*COUNT(*) FILTER (WHERE is_withheld)/COUNT(*),1) AS pct_withheld
+       ROUND((100.0*COUNT(*) FILTER (WHERE is_withheld)/COUNT(*))::NUMERIC, 1) AS pct_withheld
 FROM landings WHERE NOT is_aggregate
-GROUP BY species ORDER BY pct_withheld DESC;
+GROUP BY species
+HAVING COUNT(*) >= 10
+ORDER BY pct_withheld DESC;
 """
 
 # ----------------------------- UI -----------------------------
