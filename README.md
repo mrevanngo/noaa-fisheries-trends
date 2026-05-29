@@ -88,20 +88,50 @@ docs/
 
 ---
 
-## Key findings (on the validation fixture)
+## Key findings (real NOAA data, 1950–2024)
 
-The regression detector recovers planted trends within ~1 percentage point
-and correctly separates real declines from noise:
+Run against **159,288 commercial landing records** across 25 states and
+1,042 distinct species spanning 75 years.
 
-| Species | Annual rate | R² | Classification |
-|---|---|---|---|
-| Bay scallop | −12.0% | 0.998 | Declining (clear) |
-| Pacific sardine | −10.0% | 0.996 | Declining (clear) |
-| Atlantic cod | −7.0% | 0.990 | Declining (clear) |
-| Albacore tuna | +0.3% | 0.183 | No clear trend |
-| American lobster | +4.3% | 0.977 | Growing |
+**Species in clearest multi-decade decline** (regression-based detector,
+restricted to fisheries with ≥15 years of data and >10M lifetime pounds):
 
-(Replace with real-data findings after running `fetch_noaa_data.py`.)
+| Species | Years | Lifetime lbs | Annual rate | R² |
+|---|---:|---:|---:|---:|
+| ALEWIFE | 72 | 1.95 B | **−12.3%** | 0.70 |
+| FLOUNDER, STARRY | 47 | 34.9 M | −12.1% | 0.87 |
+| SMELT, EULACHON | 73 | 89.3 M | −10.2% | 0.57 |
+| TUNA, SKIPJACK | 75 | 3.54 B | −8.7% | 0.84 |
+| TUNA, BLUEFIN PACIFIC | 75 | 571 M | −7.7% | 0.54 |
+| JACK MACKEREL | 75 | 2.26 B | −7.1% | 0.79 |
+
+These mirror real-world stock concerns — Atlantic alewife, eulachon, and
+Pacific bluefin tuna are all formally protected or under management
+restrictions today.
+
+**Species in clearest growth:**
+
+| Species | Years | Lifetime lbs | Annual rate | R² |
+|---|---:|---:|---:|---:|
+| HAKE, PACIFIC (WHITING) | 75 | 12.5 B | +12.5% | 0.89 |
+| GOOSEFISH | 75 | 1.30 B | +10.8% | 0.74 |
+| CRAB, JONAH | 51 | 311 M | +9.4% | 0.80 |
+| COD, PACIFIC | 75 | 20.6 B | +8.4% | 0.79 |
+
+**State revenue exposure to declining species** (share of recent 3-year
+ex-vessel revenue tied to species classified as declining):
+
+| State | Recent 3-yr revenue | At risk | % at risk |
+|---|---:|---:|---:|
+| Hawaii | $354 M | $99 M | **28.0%** |
+| Alabama | $164 M | $24 M | 14.8% |
+| Florida (West) | $388 M | $48 M | 12.5% |
+| North Carolina | $198 M | $14 M | 7.0% |
+| Alaska | $4.7 B | $94 K | **0.0%** |
+
+Alaska's near-zero exposure on a $4.7B fishery is what fisheries managers
+would expect from one of the most actively managed regions in the world —
+a good sanity check on the method.
 
 ---
 
