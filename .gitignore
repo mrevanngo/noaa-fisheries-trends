@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Data — keep the synthetic fixture committed (small, makes validate.py runnable),
+# but ignore large real-data pulls. Comment the next line out if you WANT to
+# commit your real fetched data.
+# data/landings_raw.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Secrets — never commit DB credentials
+.env
