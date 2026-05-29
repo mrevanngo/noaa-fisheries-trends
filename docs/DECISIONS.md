@@ -127,3 +127,48 @@ identical for both; only the data source swaps. The validation harness
 
 Connection details come from `PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD`
 environment variables. No secrets in the repo.
+
+---
+
+## D9. Caught two aggregate patterns by inspecting real output
+
+The first run on real data surfaced two filter gaps the synthetic data
+hadn't covered:
+
+1. **NOAA marks taxonomic-family aggregates with a `**` suffix** (e.g.
+   `GROUPERS, SERRANIDAE (FAMILY) **`, `ANCHOVIES **`, `BILLFISHES **`).
+   These are sums of unidentified species in a group, not species. They
+   dominated the top of the decline list until the filter was widened.
+
+2. **`SEAWEED` and a few other categories surface unrealistic slopes**
+   (−23%/yr) that almost certainly reflect a reporting-category change
+   rather than a real fishery decline. We surface these in the data but
+   exclude them from headline findings.
+
+**Decision:** Added `LIKE '%**%'` to the aggregate filter, plus broader
+finfish/shellfish rollup patterns. Documented in the README that headline
+findings are restricted to fisheries with ≥15 years of data and >10M
+lifetime pounds, so noisy small-fishery results don't drive conclusions.
+
+**Why this matters as a story:** the synthetic fixture validated the
+*logic*. Only the real data forced the right *filtering* decisions. That
+gap is the whole reason "running it on real data" is the actual finish
+line, not "the queries return rows."
+
+---
+
+## D10. POLLOCK, WALLEYE is absent from FOSS — be honest about coverage
+
+A first-run finding suggested Alaska walleye pollock at +22%/yr — but
+inspecting the raw rows showed the only matching record was the
+`**`-suffixed family-aggregate, and the species-level rows for
+`POLLOCK, WALLEYE` simply don't exist in the FOSS landings feed.
+
+**Reason:** The huge Alaska walleye pollock fishery is reported through
+the Alaska Fisheries Science Center, not FOSS. This dataset covers
+non-AFSC commercial landings.
+
+**Decision:** Drop walleye pollock from any headline findings. In an
+interview: "This feed isn't the entire US commercial catch — the Alaska
+groundfish program is reported separately. I confirmed that by querying
+the raw landings and finding no species-level rows."
